@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='utf-8'>
+        <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        
+        <title>Nokia</title>
+        <meta name='viewport' content='width=device-width, initial-scale=1'>
+        <style>
+            
+            html, body {
+                margin: 0px !important;
+                padding: 0px !important;
+
+                width: 100% !important;
+                height: 100% !important;
+
+                background-color: rgb(1, 1, 15);
+
+                position: relative; 
+
+            }
+
+            * {
+              
+                color: rgb(221, 33, 0);
+                font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            }
+
+            h1 {
+                font-size: 50pt;
+            }
+
+            .title {
+                text-align: center;
+            }
+
+            .nokia {
+                
+                padding: 5px;
+
+                background-color: #999;
+
+                margin-top: 2%;
+                margin-left: 38%;
+
+                height: 45%;
+                width: 30%;
+            
+                border: 30px solid #333;
+            }
+
+            .buttons {
+
+                margin-top: 10%;
+                margin-left: 25%;
+
+                width: 80%;
+            }
+
+            .button {
+                border-radius: 4px;
+
+                background-color: #333;
+                
+                color: #fff;
+
+                padding: 5px;
+
+                width: 20%;
+
+                margin: 5px;
+                margin-left: 0px;
+
+                cursor: pointer;
+            }
+
+            .display {
+                padding: 2%;
+
+                width: 80%;
+                height: 100px;
+                
+                margin-top: 5%;
+                margin-left: 10%;
+                
+                background-color: #fff;
+
+                color: #333 !important;
+
+                word-wrap: break-word;
+            }
+
+            .btn {
+                margin: 5px;
+                margin-left: 10%;
+            }
+        </style>
+    </head>
+    <body>
+        <h1 class="title">Nokia</h1>
+        <div class="element">
+            <div class="nokia">
+                <div id="text" class="display text">
+
+                </div>
+                <button class="btn btn-dark" onclick="separateAndSend()">Enviar</button>
+                <div class="buttons">
+                    <div class="row">
+                        <div class="button" onclick="sendText(2)"><h2>2</h2>ABC</div>
+                        <div class="button" onclick="sendText(3)"><h2>3</h2>DEF</div>
+                        <div class="button" onclick="sendText(4)"><h2>4</h2>GHI</div>
+                    </div><br/>
+                    <div class="row">
+                        <div class="button" onclick="sendText(5)"><h2>5</h2>JKL</div>
+                        <div class="button" onclick="sendText(6)"><h2>6</h2>MNO</div>
+                        <div class="button" onclick="sendText(7)"><h2>7</h2>PQRS</div>
+                    </div><br/>
+                    <div class="row">
+                        <div class="button" onclick="sendText(8)"><h2>8</h2>TUV</div>
+                        <div class="button" onclick="sendText(9)"><h2>9</h2>WXYZ</div>
+                        <div class="button" onclick="sendText(0)"><h2>0</h2>_</div>
+                    </div><br/>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+<script>
+    // texto que será inserido no html
+    let text = "";
+
+    // tempo ativo com contagem
+    let time = null;
+    // exibe se o tempo está ativo
+    let activeTime = false;
+    // ultimo botão pressionado
+    let lastButton = "";
+
+    /*
+     * Valida o texto que será inserido no html, veirifica se os valores não se repetem.
+     * Ex: 2222 ou 77777 ou --
+    */
+    function textHtmlValid(textHtml) {
+
+        const group = text.split('-');
+        const lastGroup = group[group.length - 1];
+        const lastElement = lastGroup[lastGroup.length - 1];
+
+        if (textHtml === '-' && text[text.length - 1] === '-') { 
+            return false;
+        }
+
+        if (lastGroup === '7777' && textHtml === 7) {
+            return false;
+        }
+
+        if (lastGroup === '9999' && textHtml === 9) {
+            return false;
+        }
+
+        if (lastGroup.length == 3 &&  lastElement == textHtml && lastElement !== '7' && lastElement !== '9') {
+            return false;
+        }
+        
+        return true;
+    }   
+    
+    /**
+     * Aciona o método de validação e insere o texto no html
+    */
+    function setText(textHtml) {
+        if (textHtmlValid(textHtml)) {
+            text += textHtml; 
+            document.querySelector('.text').innerHTML = text;
+        }
+    }
+
+    /**
+     * Simula o back-end
+    */
+    function separateAndSend() {
+        const arrayCode = JSON.stringify(text.split('-'));
+        const ajax = new XMLHttpRequest();
+
+        ajax.open("POST", "http://localhost:3000/decode", true);
+        ajax.setRequestHeader("Content-type", "application/json");
+        
+        ajax.send(arrayCode);
+
+        ajax.onreadystatechange = function() {
+
+            if (ajax.readyState == 4 && ajax.status == 200) {
+                const data = ajax.responseText;
+                alert(data);
+            }
+        }
+    }
+
+    /**
+     * Reseta o cronômetro e também inativa o timer.
+    */
+    function resetTimer() {
+        if (lastButton !== "") {
+            clearTimeout(time);
+        }
+
+        activeTime = true;
+        time = setTimeout(() => {
+            setText("-");
+            activeTime = false;
+        }, 1000);
+    }
+
+    /**
+     * Inicia o Timer ao mesmo tempo que valida quando deve ser resetado.
+    */
+    function startTimer(newButton) {
+
+        if (newButton !== lastButton && activeTime !== false) {
+            setText("-");
+            resetTimer();
+            lastButton = newButton;
+            return;
+        }
+
+        if (newButton === lastButton) {
+            resetTimer();
+        }
+        
+        if (lastButton === "") {
+            resetTimer();
+        }
+
+        if (newButton !== lastButton && activeTime !== true) {
+            setText("-");
+            resetTimer();
+        }
+
+        lastButton = newButton;
+    }
+
+    /*
+     * Envia o texto para o startTimer e em seguida insere o texto no html
+    */
+    function sendText(text) {
+        startTimer(text);
+        setText(text);
+    }
+
+</script>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
