@@ -139,9 +139,9 @@
     // ultimo botão pressionado
     let lastButton = "";
 
-    /*
-     * Valida o texto que será inserido no html, veirifica se os valores não se repetem.
-     * Ex: 2222 ou 77777 ou --
+   /**
+    * Valida o texto que será inserido no html, veirifica se os valores não se repetem.
+    * Ex: 2222 ou 77777 ou --
     */
     function textHtmlValid(textHtml) {
 
@@ -168,8 +168,8 @@
         return true;
     }   
     
-    /**
-     * Aciona o método de validação e insere o texto no html
+   /**
+    * Aciona o método de validação e insere o texto no html
     */
     function setText(textHtml) {
         if (textHtmlValid(textHtml)) {
@@ -179,8 +179,8 @@
     }
 
     /**
-     * Simula o back-end
-    */
+     * Quebra o texto e envia para a api
+     */
     function separateAndSend() {
         const arrayCode = JSON.stringify(text.split('-'));
         const ajax = new XMLHttpRequest();
@@ -199,8 +199,8 @@
         }
     }
 
-    /**
-     * Reseta o cronômetro e também inativa o timer.
+   /**
+    * Reseta o cronômetro e também inativa o timer.
     */
     function resetTimer() {
         if (lastButton !== "") {
@@ -214,8 +214,8 @@
         }, 1000);
     }
 
-    /**
-     * Inicia o Timer ao mesmo tempo que valida quando deve ser resetado.
+   /**
+    * Inicia o Timer ao mesmo tempo que valida quando deve ser resetado.
     */
     function startTimer(newButton) {
 
@@ -242,8 +242,8 @@
         lastButton = newButton;
     }
 
-    /*
-     * Envia o texto para o startTimer e em seguida insere o texto no html
+   /**
+    * Envia o texto para o startTimer e em seguida insere o texto no html
     */
     function sendText(text) {
         startTimer(text);
