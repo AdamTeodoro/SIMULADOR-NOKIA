@@ -93,10 +93,17 @@
                 word-wrap: break-word;
             }
 
-            .btn {
-                margin: 5px;
-                margin-left: 10%;
+            .decodedText {
+                z-index: 5;
+
+                position: absolute;
+
+                top: 20%;
+                left: 30%;
+                right: 30%;
+
             }
+
         </style>
     </head>
     <body>
@@ -104,32 +111,39 @@
         <div class="element">
             <div class="nokia">
                 <div id="text" class="display text">
-
+                    <!-- o texto digitado vai aparecer aqui -->
                 </div>
-                <button class="btn btn-dark" onclick="separateAndSend()">Enviar</button>
+                <!-- <button class="btn btn-dark" onclick="separateAndSend()">Enviar</button> -->
                 <div class="buttons">
                     <div class="row">
                         <div class="button" onclick="sendText(2)"><h2>2</h2>ABC</div>
                         <div class="button" onclick="sendText(3)"><h2>3</h2>DEF</div>
                         <div class="button" onclick="sendText(4)"><h2>4</h2>GHI</div>
-                    </div><br/>
+                    </div>
+                    <br/>
                     <div class="row">
                         <div class="button" onclick="sendText(5)"><h2>5</h2>JKL</div>
                         <div class="button" onclick="sendText(6)"><h2>6</h2>MNO</div>
                         <div class="button" onclick="sendText(7)"><h2>7</h2>PQRS</div>
-                    </div><br/>
+                    </div>
+                    <br/>
                     <div class="row">
                         <div class="button" onclick="sendText(8)"><h2>8</h2>TUV</div>
                         <div class="button" onclick="sendText(9)"><h2>9</h2>WXYZ</div>
                         <div class="button" onclick="sendText(0)"><h2>0</h2>_</div>
-                    </div><br/>
+                    </div>
+                    <br/>
                 </div>
+            </div>
+            <div class="decodedText">
+
             </div>
         </div>
     </body>
 </html>
 <script>
-    // texto que será inserido no html
+    // são variáveis referentes ao texto que será exibido no html
+    let decodedText = "";
     let text = "";
 
     // tempo ativo com contagem
@@ -161,7 +175,16 @@
             return false;
         }
 
-        if (lastGroup.length == 3 &&  lastElement == textHtml && lastElement !== '7' && lastElement !== '9') {
+        /**
+         * Um bom código cresce para baixo e não para o lado,
+         * por isso usei quebra de linha depois do end lógico
+         */
+        if (
+            lastGroup.length == 3 &&
+            lastElement == textHtml &&
+            lastElement !== '7' &&
+            lastElement !== '9'
+        ) {
             return false;
         }
         
@@ -178,23 +201,23 @@
         }
     }
 
+    function showDecodeText(decodedText) {
+        document.querySelector('.decodedText').innerHTML = decodedText;
+    }
+
     /**
-     * Quebra o texto e envia para a api
+     * Envia o texto formatado para a api
      */
     function separateAndSend() {
         const arrayCode = JSON.stringify(text.split('-'));
         const ajax = new XMLHttpRequest();
-
         ajax.open("POST", "http://localhost:3000/decode", true);
         ajax.setRequestHeader("Content-type", "application/json");
-        
         ajax.send(arrayCode);
-
-        ajax.onreadystatechange = function() {
-
+        ajax.onreadystatechange = () => {
             if (ajax.readyState == 4 && ajax.status == 200) {
                 const data = ajax.responseText;
-                alert(data);
+                showDecodeText(data);
             }
         }
     }
@@ -211,6 +234,7 @@
         time = setTimeout(() => {
             setText("-");
             activeTime = false;
+            separateAndSend()
         }, 1000);
     }
 

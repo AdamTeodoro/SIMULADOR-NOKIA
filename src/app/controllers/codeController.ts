@@ -9,10 +9,13 @@ export class CodeController {
         console.log(req.body);
         const arrayCode: Array<string> = req.body;
     
-        if (arrayCode === undefined || !arrayCode || arrayCode.length <= 0) return res.json({ decode: null });
+        if (arrayCode === undefined ||
+            !arrayCode ||
+            arrayCode.length <= 0
+        ) return res.json({ decode: null });
 
         const tableOfDecode: any = {
-            "0": " ",
+            "0": "nbsp",
             "2": "a",
             "22": "b",
             "222": "c",

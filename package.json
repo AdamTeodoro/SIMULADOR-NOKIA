@@ -1,11 +1,12 @@
 {
   "name": "nokia",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Esse projeto simula o teclado de um dispositivo antigo, com tecnologias web. Ele é um exercício de lógica de programação e uso de tecnologias web.",
+  "main": "./src/app/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "start": "nodemon src/app/index.ts"
   },
   "author": "",
   "license": "ISC",
@@ -13,5 +14,10 @@
     "@types/body-parser": "^1.19.0",
     "@types/express": "^4.17.8",
     "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4"
   }
 }
